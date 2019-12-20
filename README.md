@@ -9,9 +9,9 @@ Usage:
     
 **Output:**
 
-    gff database        ./<gff_basename>-.db\
-    protein sequence    ./<gff_basename>-prot.fa\
-    cDNA sequence       ./<gff_basename>-cdna.fa\
+    gff database        ./<gff_basename>-.db
+    protein sequence    ./<gff_basename>-prot.fa
+    cDNA sequence       ./<gff_basename>-cdna.fa
 
 Dependancies:
 -------------
