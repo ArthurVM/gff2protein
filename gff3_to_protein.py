@@ -10,7 +10,7 @@ protein sequence    ./<gff_basename>-prot.fa
 cDNA sequence       ./<gff_basename>-cdna.fa
 
 Dependancies:
-Python3.6
+Python3
 Biopython
 pyfaidx
 gffutils
