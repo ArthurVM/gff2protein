@@ -14,9 +14,6 @@ Python3
 Biopython
 pyfaidx
 gffutils
-
-Unexpected module issues may be a result of a version problem.
-If this is the case, use chmod a+x /PATH/TO/gff3_to_proteins.py and run as executable.
 """
 
 import sys
