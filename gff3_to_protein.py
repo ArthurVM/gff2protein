@@ -24,7 +24,6 @@ import gffutils
 
 def main(gff_file, fa_file):
     fa_rec = pyfaidx.Fasta(fa_file)
-    # fa_rec = fa_file
 
     prot_file = "{base}-prot.fa".format(base=os.path.splitext(gff_file)[0])
     cdna_file = "{base}-cdna.fa".format(base=os.path.splitext(gff_file)[0])
