@@ -13,11 +13,15 @@ Usage:
     protein sequence    ./<gff_basename>-prot.fa
     cDNA sequence       ./<gff_basename>-cdna.fa
 
-Dependancies:
+Dependencies:
 -------------
     Python/Python3
     Biopython
     pyfaidx
     gffutils
+
+To install dependencies:
+
+    pip install -r ./dependencies.txt
 
 N.B. it will query each gene for exons identified by 'CDS' in the feature type column, rather than 'exon'.
