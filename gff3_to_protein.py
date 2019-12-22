@@ -1,6 +1,8 @@
 #!/usr/bin/env python3
 """AM 19DEC19
 Convert GFF3 gene predictions into protein sequences.
+This tool is splice-site aware, and will remove introns prior to translation.
+
 Usage:
     gff3_to_proteins.py <gff3> <fasta>
 
