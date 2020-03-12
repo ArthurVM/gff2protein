@@ -20,7 +20,7 @@ gffutils
 import sys
 import os
 
-from Bio import Seq
+from Bio.Seq import Seq
 import pyfaidx
 import gffutils
 
@@ -55,13 +55,18 @@ def extract_recs(gff_file, fa_rec, prot_file, cdna_file):
     # print(db.count_features_of_type(featuretype=None))
 
     for rec in db.features_of_type("gene", order_by="start"):
+
         cdna_seq = ""
         c=0
 
         for child in db.children(rec.id, featuretype="CDS"):
             c+=1
-            cdna_seq += child.sequence(fa_rec, use_strand=True)
-        prot_seq = Seq.translate(cdna_seq, stop_symbol="*", to_stop=False, cds=False, gap="X")
+            cdna_seq += child.sequence(fa_rec, use_strand=False)
+
+        if rec.strand == "+":
+            prot_seq = Seq.translate(Seq(cdna_seq), stop_symbol="*", to_stop=False, gap="X")
+        elif rec.strand == "-":
+            prot_seq = Seq.translate(Seq(cdna_seq).reverse_complement(), stop_symbol="*", to_stop=False, gap="X")
 
         header = "{id} | {scaff}:{start}-{end} number_exons={nexons} strand={strand}".format(\
         id=rec.id, scaff=rec[0], start=rec.start, end=rec.stop, nexons=c, strand=rec[6])
