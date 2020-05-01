@@ -20,7 +20,7 @@ gffutils
 import sys
 import os
 
-from Bio.Seq import Seq
+from Bio import Seq
 import pyfaidx
 import gffutils
 
