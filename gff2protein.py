@@ -61,12 +61,14 @@ def extract_recs(gff_file, fa_rec, prot_file, cdna_file):
 
         for child in db.children(rec.id, featuretype="CDS"):
             c+=1
-            cdna_seq += child.sequence(fa_rec, use_strand=False)
+            cdna_seq += child.sequence(fa_rec, use_strand=True)
+            
+        prot_seq = Seq.translate(Seq(cdna_seq), stop_symbol="*", to_stop=False, gap="X")
 
-        if rec.strand == "+":
-            prot_seq = Seq.translate(Seq(cdna_seq), stop_symbol="*", to_stop=False, gap="X")
-        elif rec.strand == "-":
-            prot_seq = Seq.translate(Seq(cdna_seq).reverse_complement(), stop_symbol="*", to_stop=False, gap="X")
+#         if rec.strand == "+":
+#             prot_seq = Seq.translate(Seq(cdna_seq), stop_symbol="*", to_stop=False, gap="X")
+#         elif rec.strand == "-":
+#             prot_seq = Seq.translate(Seq(cdna_seq).reverse_complement(), stop_symbol="*", to_stop=False, gap="X")
 
         header = "{id} | {scaff}:{start}-{end} number_exons={nexons} strand={strand}".format(\
         id=rec.id, scaff=rec[0], start=rec.start, end=rec.stop, nexons=c, strand=rec[6])
