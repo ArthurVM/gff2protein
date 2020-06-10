@@ -1,11 +1,11 @@
-# gff_to_protein
+# gff2protein
 A simple python script for taking a gff-fasta pair and extracting protein and cDNA sequences. A. V. Morris 19DEC19.
 
 This tool is exon-aware, stripping out introns to generate cDNA and protein sequence for each gene feature.
 
 Usage:
 ------
-    gff3_to_proteins.py <gff3> <fasta>
+    gff2proteins.py <gff3> <fasta>
     
 **Output:**
 
