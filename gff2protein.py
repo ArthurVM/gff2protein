@@ -4,7 +4,7 @@ Convert GFF3 gene predictions into protein sequences.
 This tool is splice-site aware, and will remove introns prior to translation.
 
 Usage:
-    gff3_to_proteins.py <gff3> <fasta>
+    gff3_to_proteins.py <gff3> <fasta> -id <featureID>
 
 Output:
 gff database        ./<gff_basename>-.db
@@ -23,15 +23,7 @@ import os
 from Bio.Seq import Seq
 import pyfaidx
 import gffutils
-
-def main(gff_file, fa_file):
-    fa_rec = pyfaidx.Fasta(fa_file)
-
-    prot_file = "{base}-prot.fa".format(base=os.path.splitext(gff_file)[0])
-    cdna_file = "{base}-cdna.fa".format(base=os.path.splitext(gff_file)[0])
-
-    # gff_file = cds_to_exon(gff_file)
-    extract_recs(gff_file, fa_rec, prot_file, cdna_file)
+import argparse
 
 def cds_to_exon(gff_file):
     """Adjusts CDS features to exon for parsing with BCBio GFF module. OBSOLETE! USED DURING TESTING ONLY.
@@ -46,7 +38,7 @@ def cds_to_exon(gff_file):
 
     return out_handle
 
-def extract_recs(gff_file, fa_rec, prot_file, cdna_file):
+def extract_recs(gff_file, fa_rec, featureID, prot_file, cdna_file):
     prot_f = open(prot_file, "w")
     cdna_f = open(cdna_file, "w")
 
@@ -54,15 +46,21 @@ def extract_recs(gff_file, fa_rec, prot_file, cdna_file):
 
     # print(db.count_features_of_type(featuretype=None))
 
-    for rec in db.features_of_type("gene", order_by="start"):
+    for rec in db.features_of_type(featureID, order_by="start"):
 
         cdna_seq = ""
         c=0
 
-        for child in db.children(rec.id, featuretype="CDS"):
+        for child in db.children(rec.id, featuretype="exon"):
             c+=1
             cdna_seq += child.sequence(fa_rec, use_strand=True)
-            
+
+        ## check how many children were found, if none check CDSs
+        if c==0:
+            for child in db.children(rec.id, featuretype="CDS"):
+                c+=1
+                cdna_seq += child.sequence(fa_rec, use_strand=True)
+
         prot_seq = Seq.translate(Seq(cdna_seq), stop_symbol="*", to_stop=False, gap="X")
 
 #         if rec.strand == "+":
@@ -97,8 +95,23 @@ def gff_predictions(gff_file):
 
     return gff_db
 
+def parseArgs(argv):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('gff', type=str, help='GFF file containing gene features.')
+    parser.add_argument('fasta', type=str, help='Nucleotide sequence file in FASTA format')
+    parser.add_argument('-id', '--featureID', type=str, default='gene', help='Name of the feature to be extracted')
+
+    return parser.parse_args()
+
+def main(args):
+    fa_rec = pyfaidx.Fasta(args.fasta)
+
+    prot_file = "{base}-prot.fa".format(base=os.path.splitext(args.gff)[0])
+    cdna_file = "{base}-cdna.fa".format(base=os.path.splitext(args.gff)[0])
+
+    # gff_file = cds_to_exon(gff_file)
+    extract_recs(args.gff, fa_rec, args.featureID, prot_file, cdna_file)
+
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print(__doc__)
-        sys.exit()
-    main(*sys.argv[1:])
+    args = parseArgs(sys.argv)
+    main(args)
